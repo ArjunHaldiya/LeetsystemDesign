@@ -35,17 +35,22 @@ Non-Functional Requirements: ${nonFunctionalReqs}
 The candidate's design includes these components: ${nodeLabels || 'none'}
 With these connections: ${edgeDescriptions || 'none'}
 
-The ideal design must include: ${requiredComponents}
-The ideal design should also include: ${recommendedComponents}
+REQUIRED components (must have — each missing one costs ~15 points): ${requiredComponents}
+RECOMMENDED components (nice to have — each adds ~5 points): ${recommendedComponents}
 Key expected connections: ${keyConnections}
 
-Evaluate the design on correctness, completeness, and scalability. Score strictly — a design missing critical components should score below 60.
+Scoring guide:
+- All required components present + correct connections = 70-80 base score
+- Each missing required component: -15 points
+- Each recommended component included: +5 points (up to 100)
+- Connections that make no architectural sense: -5 points each
+- A design with all required components should score at least 70 even if no recommended ones are present
 
 Return ONLY a JSON object with this exact shape:
 {
   "score": <number 0-100>,
   "strengths": [<2-4 short strings describing what the candidate did well>],
-  "missing": [<1-3 short strings of critical gaps or mistakes>],
+  "missing": [<1-6 short strings — list missing required components first, then missing recommended ones>],
   "feedback": "<one paragraph, 2-4 sentences, overall assessment>"
 }
 
