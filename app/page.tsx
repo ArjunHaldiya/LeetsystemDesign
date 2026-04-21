@@ -28,10 +28,6 @@ export default function HomePage() {
       <div className="relative max-w-2xl mx-auto px-6 pt-20 pb-24">
         {/* Header */}
         <div className="mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/60 text-zinc-400 text-xs mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            AI-powered feedback
-          </div>
           <h1 className="text-4xl font-bold tracking-tight text-white mb-3 leading-tight">
             Design Dojo<br />
             <span className="text-zinc-400"> Leetcode for System Designs</span>
