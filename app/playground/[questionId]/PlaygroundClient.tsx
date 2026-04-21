@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import {
   addEdge,
   applyEdgeChanges,
@@ -25,7 +26,7 @@ interface PlaygroundClientProps {
 }
 
 function PlaygroundInner({ question }: PlaygroundClientProps) {
-  const { screenToFlowPosition } = useReactFlow()
+  const { screenToFlowPosition, zoomIn, zoomOut, fitView } = useReactFlow()
 
   const storageKey = `design-${question.id}`
 
@@ -36,6 +37,7 @@ function PlaygroundInner({ question }: PlaygroundClientProps) {
   const [isHinting, setIsHinting] = useState(false)
   const [hint, setHint] = useState<string | null>(null)
   const [shareToast, setShareToast] = useState(false)
+  const [isLocked, setIsLocked] = useState(false)
   const [initialized, setInitialized] = useState(false)
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -181,8 +183,66 @@ function PlaygroundInner({ question }: PlaygroundClientProps) {
     setTimeout(() => setShareToast(false), 2000)
   }
 
+  function handleClear() {
+    setNodes([])
+    setEdges([])
+    setGradeResult(null)
+    setHint(null)
+    localStorage.removeItem(storageKey)
+  }
+
   return (
-    <div className="flex h-screen bg-zinc-950 overflow-hidden">
+    <div className="flex flex-col h-screen bg-zinc-950 overflow-hidden">
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-4 h-11 border-b border-zinc-800/60 shrink-0">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 text-zinc-500 hover:text-zinc-200 text-xs font-medium transition-colors"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0">
+            <path d="M8.5 2.5L4 7l4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Questions
+        </Link>
+        <span className="text-zinc-500 text-xs font-medium truncate max-w-xs">{question.title}</span>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => zoomOut()}
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
+            title="Zoom out"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          </button>
+          <button
+            onClick={() => zoomIn()}
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
+            title="Zoom in"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          </button>
+          <button
+            onClick={() => setIsLocked((l) => !l)}
+            className={`w-7 h-7 flex items-center justify-center rounded-lg transition-colors ${isLocked ? 'text-amber-400 bg-amber-950/40 hover:bg-amber-950/60' : 'text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800'}`}
+            title={isLocked ? 'Unlock canvas' : 'Lock canvas'}
+          >
+            {isLocked ? (
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="2" y="6" width="9" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.4"/><path d="M4 6V4.5a2.5 2.5 0 015 0V6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>
+            ) : (
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="2" y="6" width="9" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.4"/><path d="M4 6V4.5a2.5 2.5 0 015 0" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>
+            )}
+          </button>
+          <div className="w-px h-4 bg-zinc-800 mx-1" />
+          <button
+            onClick={handleClear}
+            disabled={nodes.length === 0 && edges.length === 0}
+            className="text-xs font-medium text-zinc-600 hover:text-rose-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-1"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-1 overflow-hidden">
       <Sidebar />
       <main className="flex flex-1 h-full overflow-hidden">
         <Canvas
@@ -194,6 +254,7 @@ function PlaygroundInner({ question }: PlaygroundClientProps) {
           onNodesDelete={onNodesDelete}
           onDrop={onDrop}
           onDragOver={onDragOver}
+          isLocked={isLocked}
         />
         <div className="flex flex-col w-72 border-l border-zinc-800 overflow-y-auto">
           <QuestionPanel
@@ -212,6 +273,7 @@ function PlaygroundInner({ question }: PlaygroundClientProps) {
           )}
         </div>
       </main>
+      </div>
     </div>
   )
 }

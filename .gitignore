@@ -22,8 +22,16 @@
 
 # misc
 .DS_Store
+questions.txt
 Thumbs.db
 *.pem
+*.local
+
+# local dev scripts
+/scripts/
+
+# claude
+.claude/
 
 # editors
 .vscode/
