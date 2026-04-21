@@ -2,20 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
 import { getQuestion } from '@/lib/questions'
 import { Node } from '@xyflow/react'
-
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now()
-  const entry = rateLimitMap.get(ip)
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + 60_000 })
-    return true
-  }
-  if (entry.count >= 10) return false
-  entry.count++
-  return true
-}
+import { hintRatelimit } from '@/lib/ratelimit'
 
 function getIp(req: NextRequest): string {
   return req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'unknown'
@@ -23,7 +10,8 @@ function getIp(req: NextRequest): string {
 
 export async function POST(req: NextRequest) {
   const ip = getIp(req)
-  if (!checkRateLimit(ip)) {
+  const { success } = await hintRatelimit.limit(ip)
+  if (!success) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
