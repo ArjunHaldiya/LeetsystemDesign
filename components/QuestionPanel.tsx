@@ -102,9 +102,9 @@ export function QuestionPanel({
         <button
           onClick={onRunTests}
           disabled={!canRunTests}
-          className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-950
+          className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-zinc-950
             disabled:bg-zinc-800/60 disabled:text-zinc-600 disabled:cursor-not-allowed
-            enabled:bg-blue-600 enabled:hover:bg-blue-500 enabled:text-white enabled:shadow-[0_0_0_1px_rgba(96,165,250,0.2)] enabled:hover:shadow-[0_0_16px_rgba(59,130,246,0.3)]"
+            enabled:bg-gray-600 enabled:hover:bg-gray-500 enabled:text-white enabled:shadow-[0_0_0_1px_rgba(96,165,250,0.2)] enabled:hover:shadow-[0_0_16px_rgba(59,130,246,0.3)]"
         >
           {isGrading ? (
             <span className="flex items-center justify-center gap-2">
